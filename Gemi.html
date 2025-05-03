@@ -1,0 +1,4090 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <meta charset="UTF-8">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>eNtEr</title>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+
+
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://unpkg.com/alpinejs" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    /* Reference Style Variables */
+    :root {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #121218;
+        --accent: #0fe4ff;
+        --text-primary: #e0e0e0;
+        --text-secondary: #a0a0a0;
+        --danger: #ff3860;
+    }
+
+    /* General Reset and Selection Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'space grotesk', Tahoma, Geneva, Verdana, sans-serif; /* Match reference font */
+    }
+
+    ::selection {
+        background: rgba(15, 228, 255, 0.2);
+        color: var(--text-primary);
+    }
+
+    /* Basic HTML and Body Styles */
+    html,
+    body {
+        height: 100%;
+        overflow: hidden;
+        background-color: var(--bg-primary);
+        color: var(--text-primary); /* Use reference text color */
+        overscroll-behavior: none;
+        display: flex; /* Keep flex for app layout */
+        flex-direction: column; /* Needed for the full page flex layout */}
+
+
+            
+        
+    /* App Container - Flex Layout */
+    .app-container {
+        display: flex;
+        flex-grow: 1; /* Allow container to fill available space */
+        height: 100vh;
+        
+    }
+
+    .box {
+        background-color: var(--bg-secondary);
+    }
+
+    /* Sidebar - Minimalist Vertical Panel */
+    .sidebar {
+        background-color: var(--bg-primary); /* Use reference secondary background */
+        border-right: 1px solid rgba(255, 255, 255, 0.1); /* Add a border like reference header */
+        display: flex;
+        flex-direction: column;
+        padding: 20px; /* Use reference padding */
+        transition: transform 0.3s ease, width 0.3s ease, opacity 0.3s ease, padding 0.3s ease; /* Keep transitions */
+        width: 280px; /* Slightly wider, closer to general container width */
+        flex-shrink: 0;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Add shadow like reference header */
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+        opacity: 0;
+        width: 0;
+        padding: 0;
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+        display: flex;
+        position: fixed;
+        left: 350px; /* Adjust position */
+        top: 10px; /* Adjust position */
+        border: none;
+      border-radius: 5px;
+        color: var(--accent); /* Use accent color */
+        padding: 10px; /* Adjust padding */
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        z-index: 9999;
+    
+    }
+
+    .sidebar-toggle:hover {
+        background: rgba(15, 228, 255, 0.2); /* Use reference button hover */
+    }
+
+    /* Compass (Assuming this is similar to toggle) */
+    .compass {display: flex;
+        position: fixed;
+        right: 10px; /* Adjust position */
+        top: 10px; /* Adjust position */
+        border: none;
+        border-radius: 5px;
+        color: var(--accent); /* Use accent color */
+        padding: 10px; /* Adjust padding */
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        background: transparent;
+    }
+
+    .compass:hover {
+border-color: var(--accent); /* Use accent border */
+
+        background: var(--bg-primary);
+    }
+
+
+    /* Sidebar Header & Footer */
+    .sidebar-header {
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 16px; /* Adjust font size */
+        margin-bottom: 20px; /* Adjust margin */
+        color: var(--text-secondary); /* Use secondary text color */
+        font-weight: 600; /* Add weight */
+    }
+
+    .sidebar-footer {
+        padding: 15px 0; /* Adjust padding */
+        margin-top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Add a border */
+        text-align: center; /* Center footer content */
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    /* Chat List Styles */
+    .chat-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 0 10px; /* Adjust padding */
+    }
+
+    .chat-item {
+        padding: 10px 15px; /* Adjust padding */
+        margin: 8px 0; /* Adjust margin */
+        cursor: pointer;
+        transition: all 0.2s ease; /* Shorter transition like reference buttons */
+        border-radius: 6px; /* Use reference border radius */
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Use subtle border like reference inputs */
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chat-item:hover {
+        background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+        border-color: rgba(15, 228, 255, 0.2); /* Subtle accent hover border */
+    }
+
+
+    .chat-item.active {
+        background: rgba(15, 228, 255, 0.1); /* Use accent themed background */
+        border-color: var(--accent); /* Use accent border when active */
+        box-shadow: 0 0 5px rgba(15, 228, 255, 0.3); /* Add a subtle glow */
+        transform: none; /* Remove scale effect */
+    }
+
+    .chat-item-title {
+        font-size: 5px; /* Adjust font size */
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary); /* Use secondary text color */
+        margin-bottom: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .chat-item-content {
+        font-size: 14px; /* Adjust font size */
+        color: var(--text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Limit to 1 line */
+        -webkit-box-orient: vertical;
+    }
+
+
+    /* Delete Chat Button */
+    .delete-chat-btn {
+        color: var(--danger); /* Use danger color */
+        background: none;
+        border: none;
+        padding: 5px; /* Adjust padding */
+        opacity: 0.7; /* Slightly more visible than original */
+        transition: opacity 0.2s ease;
+        float: right;
+        clear: both;
+        cursor: pointer;
+        font-size: 14px; /* Adjust size */
+    }
+
+    .delete-chat-btn:hover {
+        opacity: 1;
+        color: var(--danger); /* Ensure color remains danger */
+    }
+
+    /* New Chat Button */
+    .new-chat-btn {
+        position: relative;
+        color: var(--accent); /* Use accent color */
+        padding: 8px 16px; /* Use reference button padding */
+        border-radius: 4px; /* Use reference button radius */
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        justify-content: center; /* Center text/icon */
+        width: calc(100% - 20px); /* Account for sidebar padding */
+        margin: 10px auto 20px auto; /* Center horizontally and add margin */
+    }
+
+    .new-chat-btn:hover {
+        background-color: rgba(15, 228, 255, 0.2); /* Use reference button hover */
+    }
+
+
+    /* Chat App Container - Clean and Minimal */
+    .chat-app-container {
+        flex-grow: 1;
+        border-radius: 0;
+        display: flex;
+        overflow: hidden;
+        flex-direction: column;
+        background-color: var(--bg-primary);
+
+        position: relative; /* Needed for absolute elements inside */
+    }
+
+    /* Chat Header */
+    .chat-header {
+        background-color: var(--bg-secondary); /* Use secondary background */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Add border */
+        height: 60px;
+        padding: 0 20px; /* Adjust padding */
+        display: flex;
+        justify-content: space-between; /* Space out items */
+        align-items: center;
+        flex-shrink: 0; /* Prevent shrinking */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+    }
+
+    .chat-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+
+
+    .chat-messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px; /* Adjust padding */
+        display: flex; /* Use flex for message stacking */
+        flex-direction: column;
+        gap: 15px; /* Add gap between messages */
+
+  /* Custom scrollbar for sci-fi look */
+scrollbar-width: thin;
+scrollbar-color: var(--accent) #a64dff;
+
+
+
+  }
+.chat-messages::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00f0ff, #a64dff); /* Example sci-fi gradient */
+    border-radius: 4px;
+    border: 2px solid #a64dff;
+}
+    /* Chat Input Area */
+    .chat-input-area {
+        padding: 20px; /* Adjust padding */
+        background-color: var(--bg-secondary); /* Use secondary background */
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Add border */
+        flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    .input-container {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Gap between input and buttons */
+    }
+
+    /* Message Input */
+    #messageInput {
+        flex-grow: 1; /* Allow input to fill space */
+  
+        color: var(--text-primary); /* Use primary text color */
+        border-radius: 6px; /* Use reference border radius */
+        padding: 12px 15px; /* Adjust padding */
+        background: var(--bg-primary); /* Use reference button background */
+        border: 1px solid rgba(15, 228, 255, 0.3); /* Use reference button border */
+  
+        transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 14px; /* Adjust font size */
+        resize: none; /* Prevent textarea resize */
+        min-height: 45px; /* Minimum height for single line */
+        max-height: 200px; /* Max height before scroll */
+        overflow-y: auto;background-image:
+                linear-gradient(rgba(15, 228, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 228, 255, 0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+    }
+
+    #messageInput:focus {
+        outline: none;
+        border-color: var(--accent); /* Use accent border */
+        box-shadow: 0 0 0 2px rgba(15, 228, 255, 0.2); /* Use accent glow */
+        background: var(--bg-primary); /* Use reference button  /* Slightly lighter on focus */
+    }
+
+    /* Action Buttons */
+    .action-button {
+
+        color: var(--accent); /* Use accent color */
+        
+        padding: 10px; /* Adjust padding for circular buttons */
+        
+        cursor: pointer;
+        font-size: 15px; /* Adjust size */
+        transition: all 0.2s;
+        flex-shrink: 0; /* Prevent shrinking */
+        display: flex;
+        align-items: grid;
+        justify-content: center;
+    }
+
+    .action-button:hover {
+        background-color: rgba(15, 228, 255, 0.2); /* Use reference button hover */
+    }
+
+
+    #stopButton {
+        color: var(--danger); /* Use danger color */
+        border-color: rgba(255, 56, 96, 0.3); /* Danger border color */
+        background-color: rgba(255, 56, 96, 0.1); /* Danger background color */
+    }
+
+    #stopButton:hover {
+        color: var(--danger); /* Keep danger color on hover */
+        background-color: rgba(255, 56, 96, 0.2); /* Danger hover background */
+    }
+
+    /* Message Strip (Adapting Note style) */
+    .message-strip {
+        align-items: flex-start;
+        padding: 20px; /* Use reference note padding */
+        margin: 0; /* Handled by gap in chat-messages */
+        border-radius: 8px; /* Use reference note radius */
+        background-color: var(--bg-secondary); /* Use reference note background */
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Use subtle border */
+        transition: all 0.3s ease;
+        position: relative;
+       
+        display: flex; /* Use flex for layout */
+        flex-direction: column; /* Stack sender, content, actions */
+        gap: 10px; /* Gap between sections */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Add shadow */
+    }
+
+    .message-strip::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--accent),  
+#a64dff); /* Add accent gradient border */
+    }
+
+    .message-strip:hover {
+        transform: translateY(-2px); /* Add hover effect */
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3); /* Add hover shadow */
+        border-color: rgba(15, 228, 255, 0.2); /* Add subtle hover border color */
+    }
+
+
+    /* Message Body */
+    .message-body {
+        flex-grow: 1;
+    }
+
+    /* Message Sender */
+    .message-sender {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--accent); /* Use accent color */
+        font-size: 12px; /* Adjust font size */
+    }
+
+    /* Message Content */
+    .message-content {
+        font-size: 14px; /* Adjust font size */
+        line-height: 1.6;
+        padding-bottom: 10px; padding-top: 20px;
+        color: var(--text-primary); /* Use primary text color */
+        word-break: break-word; /* Use word-break */
+        /* Remove text-shadow */
+    }
+
+    /* Enhanced Formatting for Message Content */
+    .message-content h1 {
+        font-size: 20px; /* Adjust size */
+        color: var(--accent); /* Use accent color */
+        margin-bottom: 0.8em; /* Adjust margin */
+        margin-top: 0.5em;
+    }
+
+    .message-content h2 {
+        font-size: 18px; /* Adjust size */
+        color: var(--accent); /* Use accent color */
+        margin-bottom: 0.7em; /* Adjust margin */
+        margin-top: 0.5em;
+    }
+
+    .message-content h3 {
+        font-size: 16px; /* Adjust size */
+        color: var(--text-primary); /* Use primary text color */
+        margin-bottom: 0.6em; /* Adjust margin */
+        margin-top: 0.4em;
+    }
+
+    .message-content p {
+        margin-bottom: 0.8em; /* Add margin to paragraphs */
+    }
+
+    .message-content pre {
+        word-break: break-all;
+        padding: 12px; /* Adjust padding */
+        border-radius: 4px; /* Use reference radius */
+        background-color: rgba(255, 255, 255, 0.03); /* Use slightly transparent background */
+background-image:
+                linear-gradient(rgba(15, 228, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 228, 255, 0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        margin-bottom: 1em; /* Add margin below code block */
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Add border */
+    }
+
+    .message-content code {
+        word-break: break-all;
+        font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Monospace font for code */
+        font-size: 13px; /* Adjust size */
+        color: var(--text-primary); /* Default code color */
+
+
+    }
+
+    .message-content code:not(pre code) {
+        padding: 0.3em 0.6em;
+        border-radius: 3px;
+        color: var(--text-primary);
+        background-color: rgba(15, 228, 255, 0.05); /* Subtle accent background for inline code */
+
+        font-size: 13px;
+    }
+
+    .message-content a {
+        color: var(--accent); /* Use accent color */
+        text-decoration: underline;
+        word-break: break-word; /* Use word-break */
+    }
+
+    .message-content a:hover {
+        text-decoration: none;
+    }
+
+    .message-content em {
+        font-style: italic;
+        color: var(--text-secondary); /* Use secondary text color */
+    }
+
+    .message-content strong {
+        color: var(--text-primary); /* Ensure strong text is primary */
+    }
+
+    .message-content ul,
+    .message-content ol {
+        margin-left: 20px; /* Add indentation for lists */
+        margin-bottom: 1em;
+    }
+
+    .message-content li {
+        margin-bottom: 0.5em;
+    }
+
+
+.dialogue {
+        color: var(--accent);
+    } 
+
+    /* Message Actions */
+    .message-actions {
+        position: absolute; 
+        bottom: 10px; /* Adjust position */
+        right: 20px; /* Adjust position */
+        /* border-radius: 8px; */ /* Remove border radius */
+        /* padding: 0.25rem; */ /* Remove padding */
+        display: flex;
+        gap: 40px; /* Adjust gap between action buttons */
+        opacity: 0;
+        transition: opacity 0.2s ease; /* Adjust transition */
+        background: none; /* Remove background */
+    }
+
+    .message-strip:hover .message-actions {
+        opacity: 1;
+    }
+
+    .message-actions .action-button {
+        padding: 6px; /* Smaller padding for action buttons */
+        font-size: 14px; /* Smaller font size */
+    }
+
+
+    /* Typing Indicator */
+    .typing-indicator {
+        display: flex;
+        align-items: center; /* Vertically align */
+        padding: 15px 20px; /* Adjust padding */
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent); /* Use accent color */
+        border-radius: 50%;
+        margin: 0 4px;
+        animation: pulse 0.6s infinite ease-in-out alternate; /* Adjust animation timing */
+        opacity: 0.7; /* Start with lower opacity */
+    }
+
+    /* Stagger animation */
+    .typing-dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.8);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+    }
+
+    /* System Prompt (TextArea) */
+    #systemPrompt {
+        background: black; /* Use semi-transparent white */
+        color: var(--text-primary); /* Use primary text color */
+        padding: 12px 15px; /* Adjust padding */
+        border-radius: 6px; /* Use reference radius */
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Use subtle border */
+        font-size: 14px; /* Adjust font size */
+        resize: vertical; /* Allow vertical resize */
+        min-height: 80px; /* Set a minimum height */
+        margin-bottom: 20px; /* Add margin below */
+    }
+
+    #systemPrompt:focus {
+        outline: none;
+        border-color: var(--accent); /* Use accent border */
+        box-shadow: 0 0 0 2px rgba(15, 228, 255, 0.2); /* Use accent glow */
+        background-color: #000000BD; /* Slightly lighter on focus */
+    }
+
+    /* Model Select */
+    #modelSelect {
+        background: var(--bg-primary); /* Use reference button background */
+        border: 1px solid rgba(15, 228, 255, 0.3); /* Use reference button border */
+  
+        color: var(--text-primary); /* Use primary text color */
+        font-size: 14px; /* Adjust size */
+        padding: 8px 12px; /* Adjust padding */
+      
+        border-radius: 4px; /* Use reference radius */
+        outline: none;
+        width: auto;
+        min-width: 120px; /* Increase min-width */
+        appearance: none; /* Hide default arrow */
+background-image:
+                linear-gradient(rgba(15, 228, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 228, 255, 0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        /* Add custom arrow */
+     
+    }
+
+    #modelSelect:hover {
+        border-color: var(--accent); /* Subtle accent hover */
+    background: var(--bg-primary); /* Use reference button 
+    }
+
+    #modelSelect:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(15, 228, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Sci-fi details from Reference */
+    .glow {
+        box-shadow: 0 0 10px rgba(15, 228, 255, 0.3);
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+        position: relative;
+    }
+
+    [data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 5px;
+    }
+
+    /* Dragging class if needed */
+    .dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+    }
+
+    /* Responsive adjustments if needed (optional, based on original CSS) */
+    @media (max-width: 768px) {
+        /* Adjustments for smaller screens */
+        .sidebar {
+            width: 200px;
+        }
+        .sidebar.collapsed {
+            /* Keep collapsed styles */
+        }
+        .sidebar-toggle {
+            /* Keep fixed position */
+        }
+        .compass {
+            /* Keep fixed position */
+        }
+        .chat-messages {
+            padding: 15px;
+        }
+        .chat-input-area {
+            padding: 15px;
+        }
+        .message-strip {
+            padding: 12px;
+        }
+        .message-content {
+            font-size: 13px;
+        }
+        .message-actions {
+            bottom: 5px;
+            right: 5px;
+        }
+    }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="app-container"><aside class="sidebar scrollbar-custom" id="sidebar">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div h1>                            </div>
+
+
+
+
+
+
+
+                <div x-data="{ open: false }" class="relative">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="chat-list" id="chatList"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <button class="new-chat-btn" id="newChatBtn"><i class="fa-sharp fa-solid fa-plus"></i></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         <div style="display: contents;">
+
+
+
+
+
+
+
+  <textarea id="sp" class="text-sm resize-y max-h-[0px]" rows="0" style="visibility: hidden; height: 0; width: 0; padding: 0; margin: 0; border: 0; position: absolute;"></textarea>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </aside>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Chat Container -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="chat-app-container">
+
+
+
+
+
+
+
+<div class="relative">
+
+
+
+
+
+
+
+  <button 
+
+
+
+
+
+
+
+    id="toggleTextareaBtn"
+
+
+
+
+
+
+
+    class="compass"
+
+
+
+
+
+
+
+    onclick="toggleTextarea()"
+
+
+
+
+
+
+
+> <i class="fa-solid fa-sort"></i>
+
+
+
+  </button>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  <div 
+
+
+
+
+
+
+
+    id="textareaContainer" 
+
+
+
+
+
+
+
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4"
+
+
+
+
+
+
+
+    onclick="closeTextarea(event)"
+
+
+
+
+
+
+
+  >
+
+
+
+
+
+
+
+    <textarea 
+
+
+
+
+
+
+
+      id="systemPrompt" 
+
+
+
+
+
+
+
+      class="w-full max-w-4xl h-4/5 p-4 text-sm bg-white rounded shadow-lg resize-none"
+
+
+
+
+
+
+
+      rows="0"
+
+
+
+
+
+
+
+      onclick="event.stopPropagation()"
+
+
+
+
+
+
+
+    ></textarea>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+
+
+
+
+
+
+  function toggleTextarea() {
+
+
+
+
+
+
+
+    const container = document.getElementById('textareaContainer');
+
+
+
+
+
+
+
+    container.classList.toggle('hidden');
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    if (!container.classList.contains('hidden')) {
+
+
+
+
+
+
+
+      document.getElementById('systemPrompt').focus();
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+  function closeTextarea(event) {
+
+
+
+
+
+
+
+    if (event.target === document.getElementById('textareaContainer')) {
+
+
+
+
+
+
+
+      document.getElementById('textareaContainer').classList.add('hidden');
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+            <button class="sidebar-toggle" id="sidebarToggle">
+
+
+
+<i class="fa-solid fa-sort"></i>
+
+
+
+            </button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <header class="chat-header"><div class="grid place-items-center">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <select id="modelSelect">
+
+
+
+
+
+
+
+<option value="gemini-2.5-pro-exp-03-25">Gemini 2.5</option>
+
+           <option value="gemini-2.0-flash">Gemini 2.0</option>
+
+             
+
+
+
+
+
+
+
+                 <div style="text-align: right;">        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </select> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<main id="chatMessages" class="chat-messages scrollbar-custom">
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div id="typingIndicator" class="typing-indicator hidden">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="flex items-center">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <footer class="chat-input-area">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="flex items-end space-x-3">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <textarea id="messageInput" class="flex-1 resize-none" placeholder="Œ" rows="1"></textarea>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="flex space-x-1 flex-shrink-0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <button id="sendButton" class="action-button" title="Send Message"><i class="fa-solid fa-angle-up"></i></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <button id="stopButton" class="action-button hidden" title="Stop Generating"><i class="fa-solid fa-microchip"></i></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <button id="clearButton" class="action-button" title="Clear Chat"><i class="fa-solid fa-fire"></i></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+        const GEMINI_API_KEY = 'AIzaSyBI9lzI9r_9yFdDFgQNpn8gMMYSJhIepO0'; // <--- PUT YOUR KEY HERE
+
+        const GEMINI_API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/';
+
+
+
+        // --- DOM ELEMENTS ---
+
+        const chatMessages = document.getElementById('chatMessages');
+
+        const messageInput = document.getElementById('messageInput');
+
+        const sendButton = document.getElementById('sendButton');
+
+        const stopButton = document.getElementById('stopButton');
+
+        const clearButton = document.getElementById('clearButton');
+
+        const systemPrompt = document.getElementById('systemPrompt');
+
+        const modelSelect = document.getElementById('modelSelect');
+
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        const chatList = document.getElementById('chatList');
+
+        const newChatBtn = document.getElementById('newChatBtn');
+
+        const sidebar = document.getElementById('sidebar');
+
+        const sidebarToggle = document.getElementById('sidebarToggle');
+
+        const sidebarContent = document.getElementById('sidebar-content'); // Added
+
+
+
+        // --- STATE ---
+
+        let chats = {}; // Object to store multiple chats: { chatId: { history: [], prompt: '', model: '' } }
+
+        let currentChatId = null;
+
+        let currentAbortController = null;
+
+        let tokenInfoShown = false;
+
+        let lastUsageMetadata = null;
+
+        let isSidebarCollapsed = false;
+
+        const DEFAULT_SYSTEM_PROMPT = '';
+
+        const THINK_TAG_REGEX = /<(?:think|reasoning)>.*?<\/\w+>/gs; // Keep in case Gemini outputs similar structures or for compatibility
+
+
+
+        // --- SIDEBAR FUNCTIONS ---
+
+        function toggleSidebar() {
+
+            isSidebarCollapsed = !isSidebarCollapsed;
+
+            if (isSidebarCollapsed) {
+
+                sidebar.classList.add('collapsed');
+
+                sidebarToggle.classList.add('collapsed');
+
+                sidebarContent.classList.add('hidden'); // Hide content
+
+                sidebarToggle.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+
+            } else {
+
+                sidebar.classList.remove('collapsed');
+
+                sidebarToggle.classList.remove('collapsed');
+
+                sidebarContent.classList.remove('hidden'); // Show content
+
+                sidebarToggle.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+
+            }
+
+             // Adjust toggle button position based on state
+
+             sidebarToggle.style.left = isSidebarCollapsed ? '0px' : '255px';
+
+            localStorage.setItem('sidebarCollapsed', isSidebarCollapsed);
+        }
+
+
+
+
+
+        // --- CORE FUNCTIONS ---
+
+
+
+        function removeThinkTags(text) {
+
+            // Keep this function, although Gemini might not use <think> tags by default.
+
+            return text ? text.replace(THINK_TAG_REGEX, '').trim() : '';
+
+        }
+ function addMessageToDOM(rawContent, role, index) {
+
+            const isUser = role === 'user';
+
+
+            const displayRole = role === 'model' ? 'assistant' : role;
+
+
+
+            const cleanContent = isUser ? rawContent : removeThinkTags(rawContent); // Apply think tag removal only to non-user
+
+            const messageStrip = document.createElement('div');
+
+             // Use displayRole for CSS class and logic
+
+            messageStrip.className = `message-strip ${isUser ? 'user-message' : 'assistant-message'}`;
+
+            messageStrip.dataset.index = index;
+
+
+
+            const avatarIcon = isUser ? 'fa-sharp fa-solid fa-gamepad' : 'fa-sharp fa-regular fa-code';
+
+            const avatarClass = isUser ? 'user-avatar' : 'ai-avatar';
+
+            const senderName = isUser ? 'You' : 'AI';
+
+
+
+            let htmlContent = cleanContent ? marked.parse(cleanContent) : '<i class="fa-solid fa-circle-notch fa-spin"></i>'; // Show spinner for empty assistant messages initially
+
+            messageStrip.innerHTML = `
+
+                
+
+                <div class="message-body">
+
+                    <div class="message-sender">${senderName}</div>
+
+                    <div class="message-content">${htmlContent}</div>
+
+                </div>
+
+                <div class="message-actions">
+
+                    <button class="copy-btn" title="Copy"><i class="fas fa-clone"></i></button>
+
+                    <button class="edit-btn" title="Edit"><i class="fa-sharp fa-solid fa-pen"></i></button>
+
+                     ${!isUser ? `<button class="regenerate-btn" title="Regenerate"><i class="fa-solid fa-sync"></i></button>` : ''}
+
+                    <button class="delete-btn" title="Delete"><i class="fa-sharp fa-solid fa-delete-left"></i></button>
+
+                </div>
+
+            `;
+
+
+
+            chatMessages.appendChild(messageStrip);
+
+            scrollToBottom();
+
+
+            renderChatList();
+
+            messageStrip.querySelector('.copy-btn').addEventListener('click', () => copyMessage(index));
+
+            messageStrip.querySelector('.edit-btn').addEventListener('click', () => editMessage(index));
+
+             // Regenerate button only exists for assistant messages
+
+            messageStrip.querySelector('.regenerate-btn')?.addEventListener('click', () => regenerateAssistantResponse(index));
+
+            messageStrip.querySelector('.delete-btn').addEventListener('click', () => deleteMessage(index));
+
+
+
+            return messageStrip;
+
+        }
+
+
+
+
+
+        function scrollToBottom() {
+
+            setTimeout(() => {
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            }, 50); // Small delay often helps ensure rendering is complete
+
+        }
+
+
+
+
+
+
+
+function toggleSidebar() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    isSidebarCollapsed = !isSidebarCollapsed;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (isSidebarCollapsed) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebar.classList.add('collapsed');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebarToggle.classList.add('collapsed');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebarToggle.innerHTML = '<i class="fa-solid fa-sort"></i>';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } else {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebar.classList.remove('collapsed');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebarToggle.classList.remove('collapsed');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sidebarToggle.innerHTML = '<i class="fa-solid fa-sort"></i>';
+
+
+
+
+
+            renderChatList();
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    localStorage.setItem('sidebarCollapsed', isSidebarCollapsed);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Close sidebar when clicking outside
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('click', function(event) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Check if sidebar is open and click is outside
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (!isSidebarCollapsed && 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        !sidebar.contains(event.target) && 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        !sidebarToggle.contains(event.target)) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        toggleSidebar();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Prevent clicks inside sidebar from closing it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sidebar.addEventListener('click', function(event) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    event.stopPropagation();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+
+        function showTyping() {
+
+            typingIndicator.classList.remove('hidden');
+
+            scrollToBottom();
+
+        }
+
+
+
+        function hideTyping() {
+
+            typingIndicator.classList.add('hidden');
+
+        }
+
+
+
+        /**
+
+         * Transforms the internal chat history array into the format
+
+         * required by the Gemini API.
+
+         * Handles system prompt via systemInstruction field.
+
+         * Ensures roles alternate user/model.
+
+         */
+
+        function transformHistoryForGemini(history) {
+
+            const geminiContents = [];
+
+            let lastRole = null;
+
+
+
+            // Gemini API requires alternating user/model roles.
+
+            // Filter out consecutive messages of the same role (keeping the last),
+
+            // except for the very first message which must be 'user'.
+
+             // Also filter empty messages.
+
+            const filteredHistory = history.filter((msg, i) => {
+
+                const currentRole = msg.role === 'user' ? 'user' : 'model'; // Map assistant to model
+
+                const isNotEmpty = msg.content && msg.content.trim() !== '';
+
+                if (!isNotEmpty) return false; // Skip empty
+
+
+
+                if (i === 0) {
+
+                     // First message *must* be user role for the Gemini API contents array
+
+                    return currentRole === 'user';
+
+                }
+
+                 // Keep message if the role is different from the previous one
+
+                return currentRole !== lastRole;
+
+            });
+
+
+
+
+
+             // Now build the Gemini contents structure
+
+            for (const msg of filteredHistory) {
+
+                 // Map 'assistant' back to 'model' for the API
+
+                const apiRole = msg.role === 'assistant' ? 'model' : msg.role;
+
+
+
+                // Skip system messages here, they are handled separately
+
+                 if (apiRole === 'system') continue;
+
+
+
+                 // Add the message part
+
+                 geminiContents.push({
+
+                     role: apiRole,
+
+                     parts: [{ text: msg.content }]
+
+                 });
+
+                 lastRole = apiRole; // Track last role added
+
+            }
+
+
+
+            // Ensure the last message isn't from the model if we plan to append a user message
+
+            // This shouldn't happen with the current flow but is a safety check.
+
+            // if (geminiContents.length > 0 && geminiContents[geminiContents.length - 1].role === 'model') {
+
+            //     console.warn("History ends with a model message, this might cause issues if not handled.");
+
+            // }
+
+
+
+            return geminiContents;
+
+        }
+
+
+
+
+
+
+
+        async function streamGeminiResponse(apiHistory, systemInstructionText, modelId, signal, assistantIndex) {
+
+
+
+             let rawAssistantContent = '';
+
+             let assistantElement = null;
+
+             let contentElement = null;
+
+
+
+             const apiUrl = `${GEMINI_API_BASE_URL}${modelId}:streamGenerateContent?key=${GEMINI_API_KEY}&alt=sse`;
+
+
+
+             const requestBody = {
+
+                 contents: apiHistory,
+
+                  // Add generationConfig if desired (e.g., temperature, max output tokens)
+
+                 // generationConfig: {
+
+                 //   temperature: 0.7,
+
+                 //   maxOutputTokens: 1000,
+
+                 // }
+
+             };
+
+
+
+             // Add system instruction if provided
+
+             if (systemInstructionText && systemInstructionText.trim()) {
+
+                 requestBody.systemInstruction = { parts: [{ text: systemInstructionText }] };
+
+             }
+
+
+
+             try {
+
+                 const response = await fetch(apiUrl, {
+
+                     method: 'POST',
+
+                     headers: {
+
+                         'Content-Type': 'application/json',
+
+                         // 'Accept: application/json' // Not needed for alt=sse
+
+                     },
+
+                     body: JSON.stringify(requestBody),
+
+                     signal // Pass the abort signal
+
+                 });
+
+
+
+                 if (!response.ok) {
+
+                     // Try to read error message from Gemini response body
+
+                     let errorBody = await response.text();
+
+                     try { errorBody = JSON.parse(errorBody); } catch (e) { /* ignore json parse error */ }
+
+                     const errorMsg = errorBody?.error?.message || `API Error ${response.status}`;
+
+                     throw new Error(errorMsg);
+
+                 }
+
+
+
+                 hideTyping(); // Hide typing indicator once stream starts
+
+
+
+                 const reader = response.body.getReader();
+
+                 const decoder = new TextDecoder();
+
+                 let buffer = '';
+
+
+
+                 // Add placeholder message to history and DOM
+
+                 chats[currentChatId].history.push({ role: 'assistant', content: '' }); // Use 'assistant' internally
+
+                 assistantElement = addMessageToDOM('', 'assistant', assistantIndex); // Use 'assistant' for DOM
+
+                 contentElement = assistantElement.querySelector('.message-content');
+
+
+
+                 while (true) {
+
+                     const { done, value } = await reader.read();
+
+                     if (done) break;
+
+
+
+                     buffer += decoder.decode(value, { stream: true });
+
+                    // console.log("Buffer:", buffer); // Debug: log buffer content
+
+
+
+                     // Process buffer line by line (SSE format uses \n\n as separator, but sometimes just \n)
+
+                     let endOfLineIndex;
+
+                     while ((endOfLineIndex = buffer.indexOf('\n')) >= 0) {
+
+                         const line = buffer.substring(0, endOfLineIndex).trim();
+
+                         buffer = buffer.substring(endOfLineIndex + 1);
+
+
+
+                         if (line.startsWith('data: ')) {
+
+                             const jsonString = line.substring(6);
+
+                            // console.log("JSON String:", jsonString); // Debug: log JSON data string
+
+                             try {
+
+                                 const data = JSON.parse(jsonString);
+
+                                 // Extract text delta from Gemini's streaming format
+
+const delta = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+const usage = data.usageMetadata;
+
+
+
+
+
+if (data.usageMetadata) {
+
+  lastUsageMetadata = data.usageMetadata;
+
+}if (delta) {
+
+  rawAssistantContent += delta;
+
+                                     // Update DOM progressively
+
+                                     contentElement.innerHTML = marked.parse(removeThinkTags(rawAssistantContent) + '▋'); // Add cursor
+
+            renderChatList();
+                                     scrollToBottom();
+
+                                 }
+
+                             } catch (e) {
+
+                                 console.error("Error parsing stream JSON:", e, "on line:", jsonString);
+
+                                 // Decide how to handle parse errors - maybe break or log & continue?
+
+                             }
+
+                         }
+
+                     }
+
+                 }const finalContent = removeThinkTags(rawAssistantContent);
+
+
+
+let fullContent = finalContent;
+
+if (lastUsageMetadata) {
+
+  fullContent += `${lastUsageMetadata.promptTokenCount}  ${lastUsageMetadata.candidatesTokenCount}${lastUsageMetadata.totalTokenCount}`;
+
+}
+
+
+
+if (contentElement) {
+
+  contentElement.innerHTML = marked.parse(fullContent || '*No response*');
+
+} else {
+
+  addMessageToDOM(fullContent || '*No response*', 'assistant', assistantIndex);
+
+}
+
+chats[currentChatId].history[assistantIndex].content = fullContent;
+
+                 saveChats();
+
+
+
+             } catch (error) {
+
+                 console.error("Gemini API call failed:", error);
+
+                 // Use the centralized error handler
+
+                 handleStreamError(error, assistantElement, contentElement, assistantIndex, rawAssistantContent);
+
+             } finally {
+
+                  // Use the centralized finalization logic
+
+                  finalizeGeneration(assistantIndex);
+
+             }
+
+         }
+
+
+
+        async function handleSendMessage() {
+
+            if (!currentChatId || !messageInput.value.trim() || currentAbortController) return;
+
+            if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY') {
+
+                alert("Please replace 'YOUR_GEMINI_API_KEY' with your actual Google AI API Key in the script.");
+
+                return;
+
+            }
+
+
+
+            const userMessageContent = messageInput.value.trim();
+
+            const userMessage = { role: 'user', content: userMessageContent };
+
+
+
+            // Add user message to history and DOM
+
+            chats[currentChatId].history.push(userMessage);
+
+            addMessageToDOM(userMessage.content, userMessage.role, chats[currentChatId].history.length - 1);
+
+            saveChats(); // Save after adding user message
+
+
+
+            messageInput.value = '';
+
+            adjustTextareaHeight();
+
+            showTyping();
+
+            sendButton.disabled = true;
+
+            stopButton.classList.remove('hidden');
+
+
+
+            currentAbortController = new AbortController();
+
+            const signal = currentAbortController.signal;
+
+
+
+            // Prepare data for API call
+
+            const currentSystemPrompt = chats[currentChatId].prompt || DEFAULT_SYSTEM_PROMPT;
+
+            const modelId = chats[currentChatId].model;
+
+            // Transform history *before* API call
+
+            const apiHistory = transformHistoryForGemini([...chats[currentChatId].history]); // Pass a copy
+
+
+
+            const assistantIndex = chats[currentChatId].history.length; // Index where the new assistant message will be
+
+
+
+             // Call the streaming function (which now handles history addition, DOM updates, errors, etc.)
+
+            await streamGeminiResponse(apiHistory, currentSystemPrompt, modelId, signal, assistantIndex);
+
+
+
+            // Note: Error handling and finalization are now inside streamGeminiResponse
+
+        }
+
+
+
+        function stopGeneration() {
+
+            if (currentAbortController) {
+
+                currentAbortController.abort(); // This triggers the AbortError in fetch
+
+                // No need to set currentAbortController = null here, it's handled in finalizeGeneration
+
+            }
+
+        }
+
+
+
+        function clearChat() {
+
+            if (currentChatId && confirm('Clear this chat?')) {
+
+                stopGeneration(); // Stop any ongoing generation
+
+                chats[currentChatId].history = [];
+
+                chatMessages.innerHTML = ''; // Clear visible messages
+
+                saveChats();
+
+                // Maybe add a default message like "Chat cleared"? Optional.
+
+            }
+
+        }
+
+
+
+        function copyMessage(index) {
+
+            const message = chats[currentChatId]?.history[index];
+
+            if (message?.content) {
+
+                 navigator.clipboard.writeText(message.content)
+
+                    .then(() => {  })
+
+                    .catch(err => console.error('Failed to copy text: ', err));
+
+            }
+
+        }
+
+
+
+         function editMessage(index) {
+
+             const message = chats[currentChatId]?.history[index];
+
+
+             if (!message || (message.role !== 'user' && message.role !== 'assistant')) return;
+
+
+
+             const newText = prompt('Edit message:', message.content);
+
+             if (newText !== null && newText.trim() !== message.content) {
+
+                 message.content = newText.trim(); 
+
+                 const element = chatMessages.querySelector(`.message-strip[data-index="${index}"] .message-content`);
+
+                 if (element) {
+
+                     element.innerHTML = marked.parse(message.content);
+
+                 }
+
+                 saveChats();
+
+             }
+
+         }
+
+
+
+         function deleteMessage(index) {
+
+             if (confirm('Delete this message and all subsequent messages?')) {
+
+                 stopGeneration(); // Stop any ongoing generation first
+
+                 if (chats[currentChatId] && chats[currentChatId].history.length > index) {
+
+                     // Remove the message at 'index' and all messages after it
+
+                     chats[currentChatId].history.splice(index);
+
+                     renderCurrentChat(); // Re-render the chat from the modified history
+
+                     saveChats();
+
+                 }
+
+             }
+
+         }
+
+
+
+        async function regenerateAssistantResponse(index) {
+
+             // Ensure it's an assistant message and nothing is currently generating
+
+             if (currentAbortController || !chats[currentChatId] || chats[currentChatId].history[index]?.role !== 'assistant') {
+
+                 return;
+
+             }
+
+
+
+             stopGeneration(); // Ensure any previous (unlikely) generation is stopped
+
+
+
+             showTyping();
+
+             sendButton.disabled = true;
+
+             stopButton.classList.remove('hidden');
+
+
+
+             currentAbortController = new AbortController();
+
+             const signal = currentAbortController.signal;
+
+
+
+             // History for regeneration should include all messages *before* the message at 'index'
+
+             const historyUpToIndex = chats[currentChatId].history.slice(0, index);
+
+
+
+             // Remove the old assistant message and any subsequent messages from the state
+
+             chats[currentChatId].history.splice(index);
+
+
+
+             // Re-render the chat messages up to the point of regeneration
+
+             renderCurrentChat();
+
+
+
+             // Prepare data for the new API call
+
+             const currentSystemPrompt = chats[currentChatId].prompt || DEFAULT_SYSTEM_PROMPT;
+
+             const modelId = chats[currentChatId].model;
+
+             const apiHistory = transformHistoryForGemini(historyUpToIndex); // Use history before the regen point
+
+
+
+             const assistantIndex = index; // The new assistant message will be at the same index
+
+
+
+              // Call the streaming function to get the new response
+
+             await streamGeminiResponse(apiHistory, currentSystemPrompt, modelId, signal, assistantIndex);
+
+
+
+             // Note: Error handling and finalization are inside streamGeminiResponse
+
+         }
+
+
+
+
+
+        // --- SIDEBAR & CHAT MANAGEMENT FUNCTIONS ---
+
+
+
+        function renderChatList() {
+
+            chatList.innerHTML = ''; // Clear existing list
+
+            // Sort chats by ID (timestamp) descending for newest first
+
+            const sortedChatIds = Object.keys(chats).sort((a, b) => parseInt(b) - parseInt(a));
+
+
+
+            sortedChatIds.forEach((id) => {
+
+                const chat = chats[id];
+
+                 // Try to find the first user message for a title, fallback to 'New Chat'
+
+                 const firstUserMessage = chat.history.find(m => m.role === 'user');
+
+                 const title = firstUserMessage ? firstUserMessage.content.substring(0, 35) : 'New Chat';
+
+                 const chatItem = document.createElement('div');
+
+                 chatItem.className = `chat-item ${id === currentChatId ? 'active' : ''}`;
+
+                 chatItem.dataset.chatId = id; // Store chat ID on the element
+
+                 chatItem.innerHTML = `
+
+                    <span class="chat-item-title" title="${firstUserMessage ? firstUserMessage.content : 'New Chat'}">${title}${!firstUserMessage?'...':''}</span>
+
+                    <button class="delete-chat-btn" data-id="${id}" title="Delete Chat"><i class="fa-sharp fa-solid fa-xmark"></i></button>
+
+                `;
+
+                 // Click on item (but not delete button) to switch chat
+
+                chatItem.addEventListener('click', (e) => {
+
+                     if (!e.target.closest('.delete-chat-btn')) { // Check if click is on button or its icon
+
+                         switchChat(id);
+
+                     }
+
+                 });
+
+                 // Click on delete button
+
+                 chatItem.querySelector('.delete-chat-btn').addEventListener('click', (e) => {
+
+                     e.stopPropagation(); // Prevent chat switch event
+
+                     deleteChat(id);
+
+                 });
+
+                 chatList.appendChild(chatItem);
+
+            });
+
+        }
+
+
+
+        function switchChat(id) {
+
+             if (id === currentChatId) return;
+
+
+
+            stopGeneration();
+
+            currentChatId = id;
+
+            const currentChat = chats[id];
+
+
+
+        
+            systemPrompt.value = currentChat.prompt || DEFAULT_SYSTEM_PROMPT;
+
+            modelSelect.value = currentChat.model; // Assuming model is stored per chat
+
+            renderCurrentChat(); // Display messages for the selected chat
+
+            renderChatList(); // Update chat list to show the active item
+
+            saveChats(); // Save the new currentChatId
+
+        }
+
+
+
+        function createNewChat() {
+
+            stopGeneration();
+
+            const id = Date.now().toString(); // Use timestamp as a simple unique ID
+
+            // Initialize new chat with current settings from UI
+
+            chats[id] = {
+
+                 history: [],
+
+                 prompt: systemPrompt.value || DEFAULT_SYSTEM_PROMPT,
+
+                 model: modelSelect.value // Use the currently selected model
+
+            };
+
+            currentChatId = id;
+
+            chatMessages.innerHTML = ''; // Clear message display area
+
+            renderChatList(); // Update the sidebar
+
+            saveChats(); // Save the new chat structure
+
+        }
+
+
+
+        function deleteChat(idToDelete) {
+
+            if (!chats[idToDelete]) return;
+
+
+
+            if (confirm(`Delete chat: "${chats[idToDelete].history.find(m=>m.role==='user')?.content.substring(0, 30) || 'New Chat'}..."?`)) {
+
+                 stopGeneration(); // Stop generation if it belongs to the chat being deleted
+
+                delete chats[idToDelete];
+
+
+
+                 // If the deleted chat was the current one, select another or create new
+
+                 if (idToDelete === currentChatId) {
+
+                     const remainingIds = Object.keys(chats).sort((a, b) => parseInt(b) - parseInt(a)); // Get remaining IDs, newest first
+
+                     if (remainingIds.length > 0) {
+
+                         switchChat(remainingIds[0]); // Switch to the newest remaining chat
+
+                     } else {
+
+                         createNewChat(); // Create a new one if no chats are left
+
+                     }
+
+                 } else {
+
+                    renderChatList(); // Just update the list if a non-active chat was deleted
+
+                 }
+
+                saveChats(); // Save the changes
+
+            }
+
+        }
+
+
+
+        function renderCurrentChat() {
+
+            chatMessages.innerHTML = ''; // Clear previous messages
+
+            if (currentChatId && chats[currentChatId]) {
+
+                 // Render messages, mapping 'model' role from potential API storage back to 'assistant' for display
+
+                chats[currentChatId].history.forEach((msg, i) => {
+
+                    addMessageToDOM(msg.content, msg.role === 'model' ? 'assistant' : msg.role, i);
+
+                });
+
+            }
+            renderChatList();
+
+            scrollToBottom();
+
+        }
+
+
+
+        // --- UTILITY FUNCTIONS ---
+
+
+
+        function adjustTextareaHeight() {
+
+            messageInput.style.height = 'auto'; // Temporarily shrink to get scrollHeight
+
+            // Set height based on content, but cap it (e.g., at 200px)
+
+            // Use min height based on initial rows/styling (e.g., 44px)
+
+            const minHeight = 44;
+
+            const maxHeight = 200;
+
+            messageInput.style.height = `${Math.max(minHeight, Math.min(messageInput.scrollHeight, maxHeight))}px`;
+
+        }
+
+
+
+        function saveChats() {
+
+            localStorage.setItem('chats', JSON.stringify(chats));
+
+            localStorage.setItem('currentChatId', currentChatId);
+
+        }
+
+
+
+        function loadChats() {
+
+            const savedChats = localStorage.getItem('chats');
+
+            const savedCurrentChatId = localStorage.getItem('currentChatId');
+
+            const savedSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+
+
+             try {
+
+                chats = savedChats ? JSON.parse(savedChats) : {};
+
+                // Simple validation: ensure history is an array
+
+                Object.values(chats).forEach(chat => {
+
+                    if (!Array.isArray(chat.history)) {
+
+                        console.warn("Invalid history found for a chat, resetting it.");
+
+                        chat.history = [];
+
+                    }
+
+                    // Ensure model exists, fallback if needed
+
+                    if (!chat.model) chat.model = modelSelect.value;
+
+                });
+
+             } catch (e) {
+
+                console.error("Error parsing saved chats from localStorage:", e);
+
+                chats = {}; // Reset chats if parsing fails
+
+             }
+
+
+
+            currentChatId = savedCurrentChatId || Object.keys(chats)[0];
+
+            isSidebarCollapsed = savedSidebarCollapsed; // Load sidebar state
+
+
+
+             // Apply sidebar state visually
+
+      if (isSidebarCollapsed) {
+
+                sidebar.classList.add('collapsed');
+
+                sidebarToggle.classList.add('collapsed');
+
+                sidebarContent.classList.add('hidden'); // Also hide content
+
+                sidebarToggle.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+
+                sidebarToggle.style.left = '0px'; // Set toggle position
+
+             } else {
+
+                sidebarToggle.style.left = '0px'; // Set toggle position
+
+             }
+
+
+
+             // Decide which chat to show on load
+
+            if (Object.keys(chats).length === 0) {
+
+                 createNewChat(); // Start fresh if no chats exist
+
+            } else if (currentChatId && chats[currentChatId]) {
+
+                 switchChat(currentChatId); // Load the last active chat
+
+            } else {
+
+                 // If saved currentChatId is invalid, load the most recent chat
+
+                 const latestChatId = Object.keys(chats).sort((a, b) => parseInt(b) - parseInt(a))[0];
+
+                 switchChat(latestChatId);
+
+            }
+
+             renderChatList(); // Ensure list is rendered on load
+    renderCurrentChat();
+        }
+
+
+
+         function handleStreamError(error, element, contentElement, index, rawContent) {
+
+             hideTyping();
+
+             sendButton.disabled = false; // Re-enable send button on error
+
+             stopButton.classList.add('hidden'); // Hide stop button
+
+
+
+             let errorMessage = `Error: ${error.message}`;
+
+
+
+             if (error.name === 'AbortError') {
+
+                 errorMessage = removeThinkTags(rawContent) + ' *(stopped)*'; // Show partial content if stopped
+
+                 // If element exists, update it
+
+                 if (element && contentElement) {
+
+                     contentElement.innerHTML = marked.parse(errorMessage || '*Generation stopped*');
+
+                     // Update history with the partial/stopped content
+
+                     if(chats[currentChatId] && chats[currentChatId].history[index]) {
+
+                        chats[currentChatId].history[index].content = errorMessage;
+
+                     }
+
+                 } else if (element) {
+
+                      // If generation was stopped very early, element might exist but have no content yet
+
+                      element.remove(); // Remove the placeholder element
+
+                      // Also remove the placeholder from history
+
+                      if(chats[currentChatId] && chats[currentChatId].history.length > index) {
+
+                          chats[currentChatId].history.pop(); // Assumes it was the last added item
+
+                      }
+
+                 }
+
+                 // No need to saveChats here if it's handled in finalizeGeneration, but good backup
+
+             } else {
+
+                 // Handle other API or network errors
+
+                 // If a message element was already created for the stream
+
+                 if (element && contentElement) {
+
+                     contentElement.innerHTML = `<span class="text-red-400">Error: ${error.message}</span>`;
+
+                      // Update the history item with the error message
+
+                      if(chats[currentChatId] && chats[currentChatId].history[index]) {
+
+                         chats[currentChatId].history[index].content = `Error: ${error.message}`;
+
+                      }
+
+                 } else {
+
+                     // If the error occurred before the element was added (e.g., network error on fetch)
+
+                     // Add an error message directly to the chat DOM and history
+
+                     const errorIndex = chats[currentChatId].history.length;
+
+                     chats[currentChatId].history.push({ role: 'assistant', content: `Error: ${error.message}` });
+
+                     addMessageToDOM(`Error: ${error.message}`, 'assistant', errorIndex);
+
+                 }
+
+                 saveChats(); // Save chat state after handling the error
+
+             }
+
+             // Reset the abort controller only after handling the error/abort
+
+             currentAbortController = null;
+
+            renderChatList();
+             scrollToBottom();
+
+         }
+
+
+
+         function finalizeGeneration(index) {
+
+             // This function is called regardless of whether the stream finished successfully,
+
+             // was aborted, or encountered an error *during* the stream reading.
+
+             // Errors *before* the stream starts (like network error on fetch) are handled in streamGeminiResponse's catch block.
+
+
+
+             // Ensure UI elements are reset
+
+             hideTyping();
+
+             stopButton.classList.add('hidden');
+
+             sendButton.disabled = false;
+
+             currentAbortController = null; // Crucial: reset the controller
+
+
+
+             // Remove the typing cursor ('▋') from the final message content if it exists
+
+             const messageElement = chatMessages.querySelector(`.message-strip[data-index="${index}"]`);
+
+             if (messageElement) {
+
+                 const contentElement = messageElement.querySelector('.message-content');
+
+                 if (contentElement && contentElement.innerHTML.endsWith('▋')) {
+
+                     // Use DOM manipulation to remove the last text node if it's just the cursor
+
+                     const nodes = contentElement.childNodes;
+
+                     const lastNode = nodes[nodes.length - 1];
+
+                     if (lastNode && lastNode.nodeType === Node.TEXT_NODE && lastNode.textContent.endsWith('▋')) {
+
+                         lastNode.textContent = lastNode.textContent.slice(0, -1);
+
+                         // If the cursor was the *only* thing, the text node might become empty.
+
+                         // Marked.parse usually handles empty strings okay, but good to be aware.
+
+                     } else {
+
+                         // Fallback if cursor is part of HTML (less likely with current markdown parsing)
+
+                        contentElement.innerHTML = contentElement.innerHTML.replace(/▋$/, '');
+
+                     }
+
+                 }
+
+             }
+
+
+
+             saveChats(); // Save the final state
+
+             scrollToBottom();
+
+            renderChatList();
+         }
+
+
+
+        // --- EVENT LISTENERS ---
+
+        sendButton.addEventListener('click', handleSendMessage);
+
+        stopButton.addEventListener('click', stopGeneration);
+
+        clearButton.addEventListener('click', clearChat);
+
+        newChatBtn.addEventListener('click', createNewChat);
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+
+
+
+        messageInput.addEventListener('keypress', (e) => {
+
+            if (e.key === 'Enter' && !e.shiftKey) {
+
+                e.preventDefault(); // Prevent newline in textarea
+
+                handleSendMessage();
+
+            }
+
+        });
+
+        messageInput.addEventListener('input', adjustTextareaHeight);
+
+
+
+        // Update chat's system prompt when changed in UI
+
+        systemPrompt.addEventListener('change', () => {
+
+            if (currentChatId && chats[currentChatId]) {
+
+                chats[currentChatId].prompt = systemPrompt.value;
+
+                saveChats();
+
+            }
+
+        });
+
+
+
+         // Update chat's model when changed in UI
+
+         modelSelect.addEventListener('change', () => {
+
+             if (currentChatId && chats[currentChatId]) {
+
+                 chats[currentChatId].model = modelSelect.value;
+
+                 saveChats();
+
+             }
+
+         });
+
+
+
+   
+
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+
+
+
+
+
+
+            marked.setOptions({ breaks: true, gfm: true });
+
+
+
+
+
+
+
+            loadChats(); removeAllSpans();
+
+
+
+
+
+
+            adjustTextareaHeight();
+
+
+
+
+
+
+
+        });
+
+
+
+
+    </script>
+
+
+
+</body>
+
+</html></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
